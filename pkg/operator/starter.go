@@ -2,6 +2,7 @@ package operator
 
 import (
 	"context"
+	openshiftrouteclientset "github.com/openshift/client-go/route/clientset/versioned"
 	"os"
 	"time"
 
@@ -35,6 +36,10 @@ func RunOperator(ctx context.Context, cc *controllercmd.ControllerContext) error
 		return err
 	}
 	configClient, err := configv1client.NewForConfig(cc.KubeConfig)
+	if err != nil {
+		return err
+	}
+	osrClient, err := openshiftrouteclientset.NewForConfig(cc.KubeConfig)
 	if err != nil {
 		return err
 	}
@@ -101,6 +106,7 @@ func RunOperator(ctx context.Context, cc *controllercmd.ControllerContext) error
 		configInformers,
 		operatorClient,
 		kubeClient,
+		osrClient,
 		cc.EventRecorder,
 	)
 

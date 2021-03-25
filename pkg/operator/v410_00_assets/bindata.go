@@ -1,8 +1,10 @@
 // Code generated for package v410_00_assets by go-bindata DO NOT EDIT. (@generated)
 // sources:
 // bindata/v4.1.0/config/defaultconfig-postbootstrap-highnodeutilization.yaml
+// bindata/v4.1.0/config/defaultconfig-postbootstrap-loadvariationriskbalancing.yaml.template
 // bindata/v4.1.0/config/defaultconfig-postbootstrap-lownodeutilization.yaml
 // bindata/v4.1.0/config/defaultconfig-postbootstrap-noscoring.yaml
+// bindata/v4.1.0/config/defaultconfig-postbootstrap-targetloadpacking.yaml.template
 // bindata/v4.1.0/config/defaultconfig.yaml
 // bindata/v4.1.0/kube-scheduler/cm.yaml
 // bindata/v4.1.0/kube-scheduler/kubeconfig-cert-syncer.yaml
@@ -105,6 +107,45 @@ func v410ConfigDefaultconfigPostbootstrapHighnodeutilizationYaml() (*asset, erro
 	return a, nil
 }
 
+var _v410ConfigDefaultconfigPostbootstrapLoadvariationriskbalancingYamlTemplate = []byte(`apiVersion: kubescheduler.config.k8s.io/v1beta1
+kind: KubeSchedulerConfiguration
+clientConnection:
+  kubeconfig: /etc/kubernetes/static-pod-resources/configmaps/scheduler-kubeconfig/kubeconfig
+leaderElection:
+  leaderElect: true
+  resourceNamespace: "openshift-kube-scheduler"
+  resourceLock: "configmaps"
+profiles:
+  - schedulerName: default-scheduler
+    plugins:
+      score:
+        enabled:
+          - name: LoadVariationRiskBalancing
+    pluginConfig:
+      - name: LoadVariationRiskBalancing
+        args:
+          safeVarianceMargin: 1
+          safeVarianceSensitivity: 2
+          metricProvider:
+            type: Prometheus
+            address: PROMETHEUS_ADDRESS
+            token: PROMETHEUS_TOKEN`)
+
+func v410ConfigDefaultconfigPostbootstrapLoadvariationriskbalancingYamlTemplateBytes() ([]byte, error) {
+	return _v410ConfigDefaultconfigPostbootstrapLoadvariationriskbalancingYamlTemplate, nil
+}
+
+func v410ConfigDefaultconfigPostbootstrapLoadvariationriskbalancingYamlTemplate() (*asset, error) {
+	bytes, err := v410ConfigDefaultconfigPostbootstrapLoadvariationriskbalancingYamlTemplateBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "v4.1.0/config/defaultconfig-postbootstrap-loadvariationriskbalancing.yaml.template", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 var _v410ConfigDefaultconfigPostbootstrapLownodeutilizationYaml = []byte(`apiVersion: kubescheduler.config.k8s.io/v1beta1
 kind: KubeSchedulerConfiguration
 clientConnection:
@@ -160,6 +201,50 @@ func v410ConfigDefaultconfigPostbootstrapNoscoringYaml() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "v4.1.0/config/defaultconfig-postbootstrap-noscoring.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _v410ConfigDefaultconfigPostbootstrapTargetloadpackingYamlTemplate = []byte(`apiVersion: kubescheduler.config.k8s.io/v1beta1
+kind: KubeSchedulerConfiguration
+clientConnection:
+  kubeconfig: /etc/kubernetes/static-pod-resources/configmaps/scheduler-kubeconfig/kubeconfig
+leaderElection:
+  leaderElect: true
+  resourceNamespace: "openshift-kube-scheduler"
+  resourceLock: "configmaps"
+profiles:
+  - schedulerName: default-scheduler
+    plugins:
+      score:
+        disabled:
+          - name: NodeResourcesBalancedAllocation
+          - name: NodeResourcesLeastAllocated
+        enabled:
+          - name: TargetLoadPacking
+    pluginConfig:
+      - name: TargetLoadPacking
+        args:
+          defaultRequests:
+            cpu: "2000m"
+          defaultRequestsMultiplier: "1.5"
+          targetUtilization: 80
+          metricProvider:
+            type: Prometheus
+            address: PROMETHEUS_ADDRESS
+            token: PROMETHEUS_TOKEN`)
+
+func v410ConfigDefaultconfigPostbootstrapTargetloadpackingYamlTemplateBytes() ([]byte, error) {
+	return _v410ConfigDefaultconfigPostbootstrapTargetloadpackingYamlTemplate, nil
+}
+
+func v410ConfigDefaultconfigPostbootstrapTargetloadpackingYamlTemplate() (*asset, error) {
+	bytes, err := v410ConfigDefaultconfigPostbootstrapTargetloadpackingYamlTemplateBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "v4.1.0/config/defaultconfig-postbootstrap-targetloadpacking.yaml.template", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -791,25 +876,27 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"v4.1.0/config/defaultconfig-postbootstrap-highnodeutilization.yaml": v410ConfigDefaultconfigPostbootstrapHighnodeutilizationYaml,
-	"v4.1.0/config/defaultconfig-postbootstrap-lownodeutilization.yaml":  v410ConfigDefaultconfigPostbootstrapLownodeutilizationYaml,
-	"v4.1.0/config/defaultconfig-postbootstrap-noscoring.yaml":           v410ConfigDefaultconfigPostbootstrapNoscoringYaml,
-	"v4.1.0/config/defaultconfig.yaml":                                   v410ConfigDefaultconfigYaml,
-	"v4.1.0/kube-scheduler/cm.yaml":                                      v410KubeSchedulerCmYaml,
-	"v4.1.0/kube-scheduler/kubeconfig-cert-syncer.yaml":                  v410KubeSchedulerKubeconfigCertSyncerYaml,
-	"v4.1.0/kube-scheduler/kubeconfig-cm.yaml":                           v410KubeSchedulerKubeconfigCmYaml,
-	"v4.1.0/kube-scheduler/leader-election-rolebinding.yaml":             v410KubeSchedulerLeaderElectionRolebindingYaml,
-	"v4.1.0/kube-scheduler/localhost-recovery-client-crb.yaml":           v410KubeSchedulerLocalhostRecoveryClientCrbYaml,
-	"v4.1.0/kube-scheduler/localhost-recovery-sa.yaml":                   v410KubeSchedulerLocalhostRecoverySaYaml,
-	"v4.1.0/kube-scheduler/localhost-recovery-token.yaml":                v410KubeSchedulerLocalhostRecoveryTokenYaml,
-	"v4.1.0/kube-scheduler/ns.yaml":                                      v410KubeSchedulerNsYaml,
-	"v4.1.0/kube-scheduler/pod-cm.yaml":                                  v410KubeSchedulerPodCmYaml,
-	"v4.1.0/kube-scheduler/pod.yaml":                                     v410KubeSchedulerPodYaml,
-	"v4.1.0/kube-scheduler/policyconfigmap-role.yaml":                    v410KubeSchedulerPolicyconfigmapRoleYaml,
-	"v4.1.0/kube-scheduler/policyconfigmap-rolebinding.yaml":             v410KubeSchedulerPolicyconfigmapRolebindingYaml,
-	"v4.1.0/kube-scheduler/sa.yaml":                                      v410KubeSchedulerSaYaml,
-	"v4.1.0/kube-scheduler/scheduler-clusterrolebinding.yaml":            v410KubeSchedulerSchedulerClusterrolebindingYaml,
-	"v4.1.0/kube-scheduler/svc.yaml":                                     v410KubeSchedulerSvcYaml,
+	"v4.1.0/config/defaultconfig-postbootstrap-highnodeutilization.yaml":                 v410ConfigDefaultconfigPostbootstrapHighnodeutilizationYaml,
+	"v4.1.0/config/defaultconfig-postbootstrap-loadvariationriskbalancing.yaml.template": v410ConfigDefaultconfigPostbootstrapLoadvariationriskbalancingYamlTemplate,
+	"v4.1.0/config/defaultconfig-postbootstrap-lownodeutilization.yaml":                  v410ConfigDefaultconfigPostbootstrapLownodeutilizationYaml,
+	"v4.1.0/config/defaultconfig-postbootstrap-noscoring.yaml":                           v410ConfigDefaultconfigPostbootstrapNoscoringYaml,
+	"v4.1.0/config/defaultconfig-postbootstrap-targetloadpacking.yaml.template":          v410ConfigDefaultconfigPostbootstrapTargetloadpackingYamlTemplate,
+	"v4.1.0/config/defaultconfig.yaml":                                                   v410ConfigDefaultconfigYaml,
+	"v4.1.0/kube-scheduler/cm.yaml":                                                      v410KubeSchedulerCmYaml,
+	"v4.1.0/kube-scheduler/kubeconfig-cert-syncer.yaml":                                  v410KubeSchedulerKubeconfigCertSyncerYaml,
+	"v4.1.0/kube-scheduler/kubeconfig-cm.yaml":                                           v410KubeSchedulerKubeconfigCmYaml,
+	"v4.1.0/kube-scheduler/leader-election-rolebinding.yaml":                             v410KubeSchedulerLeaderElectionRolebindingYaml,
+	"v4.1.0/kube-scheduler/localhost-recovery-client-crb.yaml":                           v410KubeSchedulerLocalhostRecoveryClientCrbYaml,
+	"v4.1.0/kube-scheduler/localhost-recovery-sa.yaml":                                   v410KubeSchedulerLocalhostRecoverySaYaml,
+	"v4.1.0/kube-scheduler/localhost-recovery-token.yaml":                                v410KubeSchedulerLocalhostRecoveryTokenYaml,
+	"v4.1.0/kube-scheduler/ns.yaml":                                                      v410KubeSchedulerNsYaml,
+	"v4.1.0/kube-scheduler/pod-cm.yaml":                                                  v410KubeSchedulerPodCmYaml,
+	"v4.1.0/kube-scheduler/pod.yaml":                                                     v410KubeSchedulerPodYaml,
+	"v4.1.0/kube-scheduler/policyconfigmap-role.yaml":                                    v410KubeSchedulerPolicyconfigmapRoleYaml,
+	"v4.1.0/kube-scheduler/policyconfigmap-rolebinding.yaml":                             v410KubeSchedulerPolicyconfigmapRolebindingYaml,
+	"v4.1.0/kube-scheduler/sa.yaml":                                                      v410KubeSchedulerSaYaml,
+	"v4.1.0/kube-scheduler/scheduler-clusterrolebinding.yaml":                            v410KubeSchedulerSchedulerClusterrolebindingYaml,
+	"v4.1.0/kube-scheduler/svc.yaml":                                                     v410KubeSchedulerSvcYaml,
 }
 
 // AssetDir returns the file names below a certain
@@ -855,9 +942,11 @@ type bintree struct {
 var _bintree = &bintree{nil, map[string]*bintree{
 	"v4.1.0": {nil, map[string]*bintree{
 		"config": {nil, map[string]*bintree{
-			"defaultconfig-postbootstrap-highnodeutilization.yaml": {v410ConfigDefaultconfigPostbootstrapHighnodeutilizationYaml, map[string]*bintree{}},
-			"defaultconfig-postbootstrap-lownodeutilization.yaml":  {v410ConfigDefaultconfigPostbootstrapLownodeutilizationYaml, map[string]*bintree{}},
-			"defaultconfig-postbootstrap-noscoring.yaml":           {v410ConfigDefaultconfigPostbootstrapNoscoringYaml, map[string]*bintree{}},
+			"defaultconfig-postbootstrap-highnodeutilization.yaml":                 {v410ConfigDefaultconfigPostbootstrapHighnodeutilizationYaml, map[string]*bintree{}},
+			"defaultconfig-postbootstrap-loadvariationriskbalancing.yaml.template": {v410ConfigDefaultconfigPostbootstrapLoadvariationriskbalancingYamlTemplate, map[string]*bintree{}},
+			"defaultconfig-postbootstrap-lownodeutilization.yaml":                  {v410ConfigDefaultconfigPostbootstrapLownodeutilizationYaml, map[string]*bintree{}},
+			"defaultconfig-postbootstrap-noscoring.yaml":                           {v410ConfigDefaultconfigPostbootstrapNoscoringYaml, map[string]*bintree{}},
+			"defaultconfig-postbootstrap-targetloadpacking.yaml.template":          {v410ConfigDefaultconfigPostbootstrapTargetloadpackingYamlTemplate, map[string]*bintree{}},
 			"defaultconfig.yaml": {v410ConfigDefaultconfigYaml, map[string]*bintree{}},
 		}},
 		"kube-scheduler": {nil, map[string]*bintree{

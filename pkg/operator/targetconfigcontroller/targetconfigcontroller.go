@@ -3,6 +3,7 @@ package targetconfigcontroller
 import (
 	"context"
 	"fmt"
+	openshiftrouteclientset "github.com/openshift/client-go/route/clientset/versioned"
 	"sort"
 	"strings"
 	"time"
@@ -50,6 +51,7 @@ type TargetConfigController struct {
 	operatorImagePullSpec string
 	operatorClient        v1helpers.StaticPodOperatorClient
 	kubeClient            kubernetes.Interface
+	osrClient             openshiftrouteclientset.Interface
 	eventRecorder         events.Recorder
 	configMapLister       corev1listers.ConfigMapLister
 	infrastuctureLister   configv1listers.InfrastructureLister
@@ -69,6 +71,7 @@ func NewTargetConfigController(
 	configInformer configinformers.SharedInformerFactory,
 	operatorClient v1helpers.StaticPodOperatorClient,
 	kubeClient kubernetes.Interface,
+	osrClient openshiftrouteclientset.Interface,
 	eventRecorder events.Recorder,
 ) *TargetConfigController {
 	c := &TargetConfigController{
@@ -76,6 +79,7 @@ func NewTargetConfigController(
 		targetImagePullSpec:   targetImagePullSpec,
 		operatorImagePullSpec: operatorImagePullSpec,
 		kubeClient:            kubeClient,
+		osrClient:             osrClient,
 		configMapLister:       kubeInformersForNamespaces.ConfigMapLister(),
 		infrastuctureLister:   configInformer.Config().V1().Infrastructures().Lister(),
 		operatorClient:        operatorClient,
@@ -236,7 +240,7 @@ func (c *TargetConfigController) namespaceEventHandler() cache.ResourceEventHand
 func createTargetConfigController_v311_00_to_latest(c TargetConfigController, recorder events.Recorder, operatorSpec *operatorv1.StaticPodOperatorSpec) (bool, error) {
 	errors := []error{}
 
-	_, _, err := manageKubeSchedulerConfigMap_v311_00_to_latest(c.configMapLister, c.kubeClient.CoreV1(), recorder, operatorSpec, c.configInformer)
+	_, _, err := manageKubeSchedulerConfigMap_v311_00_to_latest(c.kubeClient, c.osrClient, c.configMapLister, c.kubeClient.CoreV1(), recorder, operatorSpec, c.configInformer)
 	if err != nil {
 		errors = append(errors, fmt.Errorf("%q: %v", "configmap", err))
 	}
@@ -281,7 +285,7 @@ func createTargetConfigController_v311_00_to_latest(c TargetConfigController, re
 	return false, nil
 }
 
-func manageKubeSchedulerConfigMap_v311_00_to_latest(lister corev1listers.ConfigMapLister, client corev1client.ConfigMapsGetter, recorder events.Recorder, operatorSpec *operatorv1.StaticPodOperatorSpec, configInformer configinformers.SharedInformerFactory) (*corev1.ConfigMap, bool, error) {
+func manageKubeSchedulerConfigMap_v311_00_to_latest(kClient kubernetes.Interface, osrClient openshiftrouteclientset.Interface, lister corev1listers.ConfigMapLister, client corev1client.ConfigMapsGetter, recorder events.Recorder, operatorSpec *operatorv1.StaticPodOperatorSpec, configInformer configinformers.SharedInformerFactory) (*corev1.ConfigMap, bool, error) {
 	configMap := resourceread.ReadConfigMapV1OrDie(v410_00_assets.MustAsset("v4.1.0/kube-scheduler/cm.yaml"))
 
 	var kubeSchedulerConfiguration []byte
@@ -302,6 +306,14 @@ func manageKubeSchedulerConfigMap_v311_00_to_latest(lister corev1listers.ConfigM
 			kubeSchedulerConfiguration = v410_00_assets.MustAsset("v4.1.0/config/defaultconfig-postbootstrap-highnodeutilization.yaml")
 		case v1.NoScoring:
 			kubeSchedulerConfiguration = v410_00_assets.MustAsset("v4.1.0/config/defaultconfig-postbootstrap-noscoring.yaml")
+		case v1.TargetLoadPacking:
+			configYaml := "v4.1.0/config/defaultconfig-postbootstrap-targetloadpacking.yaml"
+			updateConfigYaml(configYaml, kClient, osrClient)
+			kubeSchedulerConfiguration = v410_00_assets.MustAsset(configYaml)
+		case v1.LoadVariationRiskBalancing:
+			configYaml := "defaultconfig-postbootstrap-loadvariationriskbalancing.yaml"
+			updateConfigYaml(configYaml, kClient, osrClient)
+			kubeSchedulerConfiguration = v410_00_assets.MustAsset(configYaml)
 		default:
 			return nil, false, fmt.Errorf("profile %q not recognized", config.Spec.Profile)
 		}

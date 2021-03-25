@@ -1,0 +1,23 @@
+apiVersion: kubescheduler.config.k8s.io/v1beta1
+kind: KubeSchedulerConfiguration
+clientConnection:
+  kubeconfig: /etc/kubernetes/static-pod-resources/configmaps/scheduler-kubeconfig/kubeconfig
+leaderElection:
+  leaderElect: true
+  resourceNamespace: "openshift-kube-scheduler"
+  resourceLock: "configmaps"
+profiles:
+  - schedulerName: default-scheduler
+    plugins:
+      score:
+        enabled:
+          - name: LoadVariationRiskBalancing
+    pluginConfig:
+      - name: LoadVariationRiskBalancing
+        args:
+          safeVarianceMargin: 1
+          safeVarianceSensitivity: 2
+          metricProvider:
+            type: Prometheus
+            address: PROMETHEUS_ADDRESS
+            token: PROMETHEUS_TOKEN

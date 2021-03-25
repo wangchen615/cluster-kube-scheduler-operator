@@ -1,0 +1,28 @@
+apiVersion: kubescheduler.config.k8s.io/v1beta1
+kind: KubeSchedulerConfiguration
+clientConnection:
+  kubeconfig: /etc/kubernetes/static-pod-resources/configmaps/scheduler-kubeconfig/kubeconfig
+leaderElection:
+  leaderElect: true
+  resourceNamespace: "openshift-kube-scheduler"
+  resourceLock: "configmaps"
+profiles:
+  - schedulerName: default-scheduler
+    plugins:
+      score:
+        disabled:
+          - name: NodeResourcesBalancedAllocation
+          - name: NodeResourcesLeastAllocated
+        enabled:
+          - name: TargetLoadPacking
+    pluginConfig:
+      - name: TargetLoadPacking
+        args:
+          defaultRequests:
+            cpu: "2000m"
+          defaultRequestsMultiplier: "1.5"
+          targetUtilization: 80
+          metricProvider:
+            type: Prometheus
+            address: PROMETHEUS_ADDRESS
+            token: PROMETHEUS_TOKEN

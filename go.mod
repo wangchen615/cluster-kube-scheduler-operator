@@ -13,6 +13,7 @@ require (
 	github.com/openshift/build-machinery-go v0.0.0-20210115170933-e575b44a7a94
 	github.com/openshift/client-go v0.0.0-20210112165513-ebc401615f47
 	github.com/openshift/library-go v0.0.0-20210127081712-a4f002827e42
+	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.7.1
 	github.com/prometheus/common v0.10.0
 	github.com/spf13/cobra v1.1.1
@@ -24,6 +25,8 @@ require (
 	k8s.io/component-base v0.20.1
 	k8s.io/klog/v2 v2.4.0
 )
+
+replace github.com/openshift/api => github.com/wangchen615/api v0.0.0-20210325011743-958dcb096e1a
 
 replace github.com/jteeuwen/go-bindata => github.com/jteeuwen/go-bindata v3.0.8-0.20151023091102-a0ff2567cfb7+incompatible
 
